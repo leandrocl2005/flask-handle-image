@@ -1,0 +1,2 @@
+- > pylint --generate-rcfile > .pylintrc
+- > "python.linting.pylintArgs":["--extension-pkg-whitelist=cv2"]

@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "C:\\Users\\lele\\anaconda3\\envs\\flask37\\python.exe",
+    "python.linting.lintOnSave": true,
+    "python.linting.flake8Enabled": true
+}
