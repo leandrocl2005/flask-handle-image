@@ -23,23 +23,30 @@
         visibility: hidden;
       }
     </style>
+    <script src="{{url_for('static', filename='jquery-1.11.3.min.js')}}"></script>
   </head>
   <body>
     <h1>File Upload</h1>
 
     <form method="POST" action="" enctype="multipart/form-data">
-      <p><input type="file" name="file" id="imgInp" ></p>
-      <p><input
+      <input type="file" name="file" id="imgInp" >
+      <button
         type="submit"
-        value="Submit"  
         onclick="setLoaderVisible()"
         class="visible"
         id="btnSubmit"
-      ></p>
-      <img id="blah" src="#"
-        alt="your image"
-        width="150px"
-        height="150px"/>
+      >Enviar</button>
+      <div class="loader-and-image">
+        <img
+          id="blah"
+          src="#"
+          alt="your image"
+          width="150px"
+          height="150px"
+          class="hide"
+        />
+        <div id="loader" class="hide" ></div>
+      </div>
     </form>
 
     <hr>
@@ -52,7 +59,7 @@
       <img src="{{image}}" width="150px" height="150px"/>
     {% endif %}
 
-    <div id="loader" class="hide" ></div>
+    
 
     <script>
       function readURL(input) {
@@ -60,7 +67,10 @@
           var reader = new FileReader();
           
           reader.onload = function(e) {
-            document.getElementById('blah').src=e.target.result
+            imageCanvas = document.getElementById('blah');
+            imageCanvas.src=e.target.result;
+            imageCanvas.classList.add('visible');
+            imageCanvas.classList.remove('hide');
           }
           
           reader.readAsDataURL(input.files[0]); // convert to base64 string
@@ -75,6 +85,7 @@
         var loader = document.getElementById('loader');
         loader.classList.remove('hide');
         loader.classList.add('visible');
+
         var btnSubmit = document.getElementById('btnSubmit');
         btnSubmit.classList.remove('visible');
         btnSubmit.classList.add('hide');

@@ -28,20 +28,17 @@ def validate_image(stream):
     return '.' + (format if format != 'jpeg' else 'jpg')
 
 
-@app.route('/uploads/<filename>')
-def upload(filename):
-    return send_from_directory(app.config['UPLOAD_PATH'], filename)
-
-
 def convert2gray_from_filename(filename):
     image_from_upload = cv2.imread(filename)
     gray_image = cv2.cvtColor(image_from_upload, cv2.COLOR_BGR2GRAY)
     return gray_image
 
+
 def convert2gray_from_image(image):
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     time.sleep(5)
     return gray_image
+
 
 def create_uri_image_from_numpy_image(image):
     img = Image.fromarray(image.astype("uint8"))
@@ -50,8 +47,22 @@ def create_uri_image_from_numpy_image(image):
     rawBytes.seek(0)
     img_base64 = base64.b64encode(rawBytes.getvalue()).decode('ascii')
     mime = "image/jpeg"
-    uri = "data:%s;base64,%s"%(mime, img_base64)
+    uri = "data:%s;base64,%s" % (mime, img_base64)
     return uri
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(
+        os.path.join(app.root_path, 'static'),
+        'favicon-16x16.png',
+        mimetype='image/vnd.microsoft.icon'
+    )
+
+
+@app.route('/uploads/<filename>')
+def upload(filename):
+    return send_from_directory(app.config['UPLOAD_PATH'], filename)
 
 
 @app.route('/')
@@ -74,7 +85,7 @@ def upload_files():
         if file_ext not in app.config['UPLOAD_EXTENSIONS']:
             abort(400)
         # uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-        
+
         gray_image = convert2gray_from_image(numpy_image)
         uri_image = create_uri_image_from_numpy_image(gray_image)
 
