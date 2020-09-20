@@ -3,7 +3,72 @@
   <head>
     <title>File Upload</title>
     <style>
-      a {margin-left: 20px;}
+      * {
+        padding: 0;
+        box-sizing: border-box;
+        border: 0;
+        margin: 0;
+      }
+
+      main {
+        display: flex;
+        margin: 32px 0px;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        height: 50vh;
+        width: 100%;
+      }
+
+      main form {
+        margin: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      main form .input-and-button {
+        display: flex;
+        flex-direction: row;
+      }
+
+      main form .input-and-button button {
+        margin-left: 10px;
+        padding: 2px 4px;
+        border: 1px solid #000;
+        border-radius: 2px;
+      }
+
+      main .transformed-image {
+        width: 150px;
+        height: 150px;
+      }
+
+      .loader-and-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 150px;
+        height: 0;
+        margin-top: 20px;
+      }
+
+      #loader {
+        position: absolute;
+        top: 50px;
+        left: 50px;        
+      }
+
+      .loader-and-image img {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
       #loader {
         border: 16px solid #f3f3f3; /* Light grey */
         border-top: 16px solid #3498db; /* Blue */
@@ -22,44 +87,46 @@
       .hide {
         visibility: hidden;
       }
+      .low-opacity {
+        opacity: 0.4;
+      }
     </style>
     <script src="{{url_for('static', filename='jquery-1.11.3.min.js')}}"></script>
   </head>
   <body>
     <h1>File Upload</h1>
 
-    <form method="POST" action="" enctype="multipart/form-data">
-      <input type="file" name="file" id="imgInp" >
-      <button
-        type="submit"
-        onclick="setLoaderVisible()"
-        class="visible"
-        id="btnSubmit"
-      >Enviar</button>
-      <div class="loader-and-image">
-        <img
-          id="blah"
-          src="#"
-          alt="your image"
-          width="150px"
-          height="150px"
-          class="hide"
-        />
-        <div id="loader" class="hide" ></div>
-      </div>
-    </form>
-
-    <hr>
+    <main>
+      <form method="POST" action="" enctype="multipart/form-data">
+        <div class="input-and-button">
+          <input type="file" name="file" id="imgInp" >
+          <button
+            type="submit"
+            onclick="setLoaderVisible()"
+            class="visible"
+            id="btnSubmit"
+          >Enviar</button>
+        </div>
+        <div class="loader-and-image">
+          <img
+            id="blah"
+            src="#"
+            alt="your image"
+            class="hide"
+          />
+          <div id="loader" class="hide" ></div>
+        </div>
+      </form>
+      {% if image %}
+        <img src="{{image}}" class="transformed-image" />
+      {% endif %}
+    </main>
 
     {% for file in files %}
       <img src="{{ url_for('upload', filename=file) }}" style="width: 64px">
     {% endfor %}
 
-    {% if image %}
-      <img src="{{image}}" width="150px" height="150px"/>
-    {% endif %}
 
-    
 
     <script>
       function readURL(input) {
@@ -69,8 +136,19 @@
           reader.onload = function(e) {
             imageCanvas = document.getElementById('blah');
             imageCanvas.src=e.target.result;
+            
             imageCanvas.classList.add('visible');
             imageCanvas.classList.remove('hide');
+
+            loaderImageContainer = document.getElementsByClassName(
+              'loader-and-image'
+            )[0];
+            loaderImageContainer.style.height = "150px";
+
+            transformedImage = document.getElementsByClassName(
+              'transformed-image'
+            )[0];
+            transformedImage.style.height = "0px";
           }
           
           reader.readAsDataURL(input.files[0]); // convert to base64 string
@@ -89,6 +167,9 @@
         var btnSubmit = document.getElementById('btnSubmit');
         btnSubmit.classList.remove('visible');
         btnSubmit.classList.add('hide');
+
+        imageCanvas = document.getElementById('blah');
+        imageCanvas.classList.add('low-opacity');
       }
     </script>
   </body>
